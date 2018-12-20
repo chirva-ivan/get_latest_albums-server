@@ -1,4 +1,5 @@
 const axios = require('axios');
+const rateYourMusicService = require('./rateYourMusic');
 
 function getAlbumsList(
     year = 2018, genres = 'ambient'
@@ -16,8 +17,8 @@ function getAlbumsList(
     };
 
     return axios.get(url, params).then((response) => {
-        console.log(response);
-    });
+        return rateYourMusicService.parse(response.data);
+    }).then((music) => console.log(music));
 }
 
 module.exports = {
