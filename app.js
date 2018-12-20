@@ -1,3 +1,23 @@
+/* mongo section */
+const mongoose = require('mongoose');
+
+const MongoClient = require('mongodb').MongoClient;
+const assert = require('assert');
+
+// Connection URL
+const url = 'mongodb://localhost:27017/latest';
+
+// Use connect method to connect to the server
+MongoClient.connect(url, function(err, db) {
+    assert.equal(null, err);
+    console.log("Connected successfully to server");
+
+    db.close();
+});
+
+mongoose.connect('mongodb://localhost/latest');
+
+/* express section */
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
