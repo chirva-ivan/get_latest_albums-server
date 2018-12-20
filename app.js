@@ -38,3 +38,8 @@ app.use('/', indexRouter);
 app.use('/user', usersRouter);
 
 module.exports = app;
+
+/* test */
+const polingService = require('./services/poling');
+
+polingService.startPoling();
