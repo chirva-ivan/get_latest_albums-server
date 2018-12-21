@@ -19,7 +19,8 @@ function parse(rawData) {
 
             return { author, title, date, rating, tags }
         })
-        .get();
+        .get()
+        .filter((item) => item.author && item.title);
 }
 
 module.exports = {

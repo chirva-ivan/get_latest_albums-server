@@ -8,7 +8,7 @@ const AlbumModel = mongoose.model('Album', Album);
 const AlbumsCollectionModel = mongoose.model('AlbumsCollection', AlbumsCollection);
 
 function getAlbumsList(
-    year = '2018', genres = 'ambient'
+    year = '2018', genre = 'ambient'
 ) {
     const url = 'https://rateyourmusic.com/customchart';
     const params = {
@@ -19,13 +19,15 @@ function getAlbumsList(
         chart_type: 'top',
         type: 'album',
         year,
-        genres
+        genres: genre
     };
 
     return axios.get(url, { params }).then((response) => {
         return rateYourMusicService.parse(response.data);
     }).then((albums) => {
         const collection = new AlbumsCollectionModel({
+            genre,
+            year,
             albums: albums.map((album) => new AlbumModel(album))
         });
 
