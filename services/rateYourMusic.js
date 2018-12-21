@@ -10,7 +10,7 @@ function parse(rawData) {
             const author = element.find('a.artist').text();
             const title = element.find('a.album').text();
             const date = element.find('.chart_year').text();
-            const rating = element.find('.scoreValue').text();
+            const rating = element.find('.chart_stats a b').first().text();
             const tags = element.find('.extra_metadata_genres .genre').map(
                 (index, tagElement) => {
                     return html(tagElement).text();
