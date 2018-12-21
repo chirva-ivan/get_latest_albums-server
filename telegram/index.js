@@ -17,18 +17,32 @@ bot.command('start', (ctx) =>
 );
 
 bot.command('help', (ctx) => ctx.replyWithMarkdown('type any music tag for request'));
+
+// TODO: refactor to telegram scenes
 bot.hears([AMBIENT, ELECTRONIC, METAL, POST_PUNK], (ctx) => {
-    const message = ctx.update.message.text;
-    ctx.replyWithMarkdown(`loading some ${message}...`);
+    const genre = ctx.update.message.text;
 
-    musicService.getAlbumsList('2018', message).then((albums) => {
-        const markup = albums.map((item) => {
-            return `<code>${item.author} - ${item.title}</code>\n<i>${item.date} | Rating: ${item.rating}</i>`
+    ctx.replyWithMarkdown('select year:', Markup
+        .keyboard([['2018', '2017']])
+        .resize()
+        .extra()
+    ).then(() => {
+        bot.hears(['2018', '2017'], (ctx) => {
+            const year = ctx.update.message.text;
+
+            ctx.replyWithMarkdown(`loading some ${genre}...`);
+
+            musicService.getAlbumsList(year, genre).then((albums) => {
+                const markup = albums.map((item) => {
+                    return `<code>${item.author} - ${item.title}</code>\n<i>${item.date} | Rating: ${item.rating}</i>`
+                });
+
+                ctx.replyWithHTML(markup.join('\n\n'));
+            })
         });
-
-        ctx.replyWithHTML(markup.join('\n\n'));
-    })
-
+    });
 });
+
+
 
 module.exports = bot;
