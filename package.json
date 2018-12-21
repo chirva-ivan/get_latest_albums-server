@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "start-bot-dev": "source ./.env && micro-bot -t ${BOT_TOKEN_DEV} ./telegram/index.js"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -11,6 +12,7 @@
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "express": "~4.16.0",
+    "micro-bot": "^2.5.3",
     "mongodb": "^2.2.36",
     "mongoose": "^5.4.0",
     "morgan": "~1.9.0"
