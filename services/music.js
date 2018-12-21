@@ -1,5 +1,11 @@
 const axios = require('axios');
+const mongoose = require('mongoose');
 const rateYourMusicService = require('./rateYourMusic');
+const Album = require('../schemas/album');
+const AlbumsCollection = require('../schemas/albumsCollection');
+
+const AlbumModel = mongoose.model('Album', Album);
+const AlbumsCollectionModel = mongoose.model('AlbumsCollection', AlbumsCollection);
 
 function getAlbumsList(
     year = '2018', genres = 'ambient'
@@ -18,7 +24,18 @@ function getAlbumsList(
 
     return axios.get(url, { params }).then((response) => {
         return rateYourMusicService.parse(response.data);
-    }).then((music) => console.log(music));
+    }).then((albums) => {
+        const collection = new AlbumsCollectionModel({
+            albums: albums.map((album) => new AlbumModel(album))
+        });
+
+        collection.save( (error, item) => {
+            if (error) return console.error(error);
+            console.log(item);
+        });
+
+        return collection;
+    });
 }
 
 module.exports = {

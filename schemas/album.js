@@ -10,4 +10,4 @@ const Album = new Schema({
     rating: { type: Date, default: null }
 });
 
-export default Album;
+module.exports = Album;
