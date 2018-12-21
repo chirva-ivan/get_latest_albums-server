@@ -1,8 +1,10 @@
 const musicService = require('./music');
 
 function startPoling(delay = 2000) {
+    musicService.getAlbumsList();
+
     setTimeout(() => {
-        musicService.getAlbumsList()
+        startPoling(delay);
     }, delay);
 }
 
