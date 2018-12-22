@@ -16,9 +16,9 @@ function getAlbumsList(
         genres: genre
     };
 
-    return axios.get(url, { params }).then((response) => {
-        return rateYourMusicService.parse(response.data);
-    });
+    return axios.get(url, {params}).then(
+        (response) => rateYourMusicService.parse(response.data)
+    );
 }
 
 module.exports = {

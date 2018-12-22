@@ -12,9 +12,7 @@ function parse(rawData) {
             const date = element.find('.chart_year').text();
             const rating = element.find('.chart_stats a b').first().text();
             const tags = element.find('.extra_metadata_genres .genre').map(
-                (index, tagElement) => {
-                    return html(tagElement).text();
-                }
+                (index, tagElement) => html(tagElement).text()
             ).get();
 
             return { author, title, date, rating, tags }
