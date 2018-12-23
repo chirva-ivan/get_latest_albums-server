@@ -1,5 +1,6 @@
 const { Composer, Markup } = require('micro-bot');
 const session = require('telegraf/session');
+const Scene = require('telegraf/scenes/base');
 
 const musicService = require('../services/music');
 
@@ -7,10 +8,15 @@ const bot = new Composer();
 
 bot.use(session());
 
+// suggestion genres
 const AMBIENT = 'ambient';
 const ELECTRONIC = 'electronic';
 const METAL = 'metal';
 const POST_PUNK = 'post-punk';
+
+// scenes constants
+const SUBSCRIPTION_SCENE = 'subscription';
+const MUSIC_REQUEST_SCENE = 'music';
 
 bot.command('start', (ctx) =>
     ctx.replyWithMarkdown('Select music genre from list below or type any other', Markup
@@ -22,8 +28,17 @@ bot.command('start', (ctx) =>
 
 bot.command('help', (ctx) => ctx.replyWithMarkdown('Type any music genre for request'));
 
-// TODO: refactor to telegram scenes
 bot.on('text', (ctx) => {
+    if (ctx.session.genre) {
+        ctx.scene.enter(SUBSCRIPTION_SCENE);
+    } else {
+        ctx.scene.enter(MUSIC_REQUEST_SCENE);
+    }
+});
+
+// music request scene
+const music = new Scene(MUSIC_REQUEST_SCENE);
+music.enter((ctx) => {
     // TODO: add genre validation
     const genre = ctx.update.message.text;
 
@@ -40,11 +55,9 @@ bot.on('text', (ctx) => {
                 .keyboard([['Y', 'N']])
                 .resize()
                 .extra()
-            );
-
-            bot.hears(['Y', 'N'], (ctx) => {
-                // TODO: add subscription
-            })
+            ).then(() => {
+                ctx.scene.enter(SUBSCRIPTION_SCENE);
+            });
         });
     })
 });
@@ -53,6 +66,12 @@ function getAlbumsListItemMarkups(item) {
     return `<code>${item.author} - ${item.title}</code>\n<i>${item.date} | Rating: ${item.rating}</i>`;
 }
 
-
+// subscription scene
+const subscription = new Scene(SUBSCRIPTION_SCENE);
+subscription.enter((ctx) => ctx.reply('Hi'));
+subscription.leave((ctx) => ctx.reply('Bye'));
+subscription.hears(['Y', 'N'], (ctx) => {
+    // TODO: add subscription
+});
 
 module.exports = bot;
