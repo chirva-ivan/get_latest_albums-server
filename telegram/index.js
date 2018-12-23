@@ -61,6 +61,9 @@ music.enter((ctx) => {
         });
     })
 });
+music.leave((ctx) => {
+    delete ctx.session.genre;
+});
 
 function getAlbumsListItemMarkups(item) {
     return `<code>${item.author} - ${item.title}</code>\n<i>${item.date} | Rating: ${item.rating}</i>`;
