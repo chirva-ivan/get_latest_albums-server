@@ -1,6 +1,4 @@
 const { Composer, Markup } = require('micro-bot');
-const session = require('telegraf/session');
-const Stage = require('telegraf/stage');
 const Scene = require('telegraf/scenes/base');
 
 const musicService = require('../services/music');
@@ -31,7 +29,7 @@ music.enter((ctx) => {
     // TODO: add genre validation
     const genre = ctx.update.message.text;
 
-    ctx.session.genre = genre;
+    ctx.state.genre = genre;
 
     const year = ctx.update.message.text;
 
@@ -52,7 +50,7 @@ music.enter((ctx) => {
 });
 
 music.leave((ctx) => {
-    delete ctx.session.genre;
+    delete ctx.state.genre;
 });
 
 function getAlbumsListItemMarkups(item) {
@@ -70,18 +68,14 @@ subscription.hears(['Y', 'N'], (ctx) => {
 
 bot.command('help', (ctx) => ctx.replyWithMarkdown('Type any music genre for request'));
 
-// Create scene manager
-const stage = new Stage();
-
 // Scene registration
 stage.register(music);
 
-bot.use(session());
 bot.use(stage.middleware());
 
 bot.on('message', (ctx) => {
-    console.log(ctx.session);
-    if (ctx.session.genre) {
+    console.log(ctx.state);
+    if (ctx.state.genre) {
         ctx.scene.enter(SUBSCRIPTION_SCENE);
     } else {
         ctx.scene.enter(MUSIC_REQUEST_SCENE);
