@@ -1,12 +1,11 @@
 const { Composer, Markup } = require('micro-bot');
 const session = require('telegraf/session');
+const Stage = require('telegraf/stage');
 const Scene = require('telegraf/scenes/base');
 
 const musicService = require('../services/music');
 
 const bot = new Composer();
-
-bot.use(session());
 
 // suggestion genres
 const AMBIENT = 'ambient';
@@ -25,16 +24,6 @@ bot.command('start', (ctx) =>
         .extra()
     )
 );
-
-bot.command('help', (ctx) => ctx.replyWithMarkdown('Type any music genre for request'));
-
-bot.on('text', (ctx) => {
-    if (ctx.session.genre) {
-        ctx.scene.enter(SUBSCRIPTION_SCENE);
-    } else {
-        ctx.scene.enter(MUSIC_REQUEST_SCENE);
-    }
-});
 
 // music request scene
 const music = new Scene(MUSIC_REQUEST_SCENE);
@@ -61,6 +50,7 @@ music.enter((ctx) => {
         });
     })
 });
+
 music.leave((ctx) => {
     delete ctx.session.genre;
 });
@@ -74,7 +64,28 @@ const subscription = new Scene(SUBSCRIPTION_SCENE);
 subscription.enter((ctx) => ctx.reply('Hi'));
 subscription.leave((ctx) => ctx.reply('Bye'));
 subscription.hears(['Y', 'N'], (ctx) => {
+    const id = ctx.chat.id;
     // TODO: add subscription
+});
+
+bot.command('help', (ctx) => ctx.replyWithMarkdown('Type any music genre for request'));
+
+// Create scene manager
+const stage = new Stage();
+
+// Scene registration
+stage.register(music);
+
+bot.use(session());
+bot.use(stage.middleware());
+
+bot.on('message', (ctx) => {
+    console.log(ctx.session);
+    if (ctx.session.genre) {
+        ctx.scene.enter(SUBSCRIPTION_SCENE);
+    } else {
+        ctx.scene.enter(MUSIC_REQUEST_SCENE);
+    }
 });
 
 module.exports = bot;
