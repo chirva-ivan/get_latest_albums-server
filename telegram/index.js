@@ -1,9 +1,12 @@
 const { Composer, Markup } = require('micro-bot');
 const Scene = require('telegraf/scenes/base');
+const Stage = require('telegraf/stage');
+const session = require('telegraf/session');
 
 const musicService = require('../services/music');
 
 const bot = new Composer();
+const stage = new Stage();
 
 // suggestion genres
 const AMBIENT = 'ambient';
@@ -68,8 +71,10 @@ subscription.hears(['Y', 'N'], (ctx) => {
 
 bot.command('help', (ctx) => ctx.replyWithMarkdown('Type any music genre for request'));
 
-// Scene registration
 stage.register(music);
+stage.register(subscription);
+
+bot.use(session());
 
 bot.use(stage.middleware());
 
