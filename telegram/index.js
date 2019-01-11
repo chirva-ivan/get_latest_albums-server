@@ -34,7 +34,7 @@ music.enter((ctx) => {
 
     ctx.state.genre = genre;
 
-    const year = ctx.update.message.text;
+    const year = '2010s';
 
     ctx.replyWithMarkdown(`loading some ${genre}...`);
 

@@ -2,7 +2,7 @@ const axios = require('axios');
 const rateYourMusicService = require('./rateYourMusic');
 
 function getAlbumsList(
-    year = '2018', genre = 'ambient'
+    year = '2010s', genre = 'ambient'
 ) {
     const url = 'https://rateyourmusic.com/customchart';
     const params = {
